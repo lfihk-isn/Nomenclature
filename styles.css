@@ -1,18 +1,18 @@
 @font-face {
   font-family: 'martelsans';
-  src: url('../fonts/MartelSans-Regular.ttf');
+  src: url('fonts/MartelSans-Regular.ttf');
 }
 
 @font-face {
   font-family: 'bariol';
-  src: url('../fonts/Bariol_Bold.otf');
+  src: url('fonts/Bariol_Bold.otf');
 }
 
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: url('../fonts/MaterialIcons-Regular.woff2') format('woff2');
+  src: url('fonts/MaterialIcons-Regular.woff2') format('woff2');
 }
 
 .material-icons {
