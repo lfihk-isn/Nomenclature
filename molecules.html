@@ -1,0 +1,202 @@
+<html style="height:100%;">
+<head>
+	<meta charset="utf-8">
+
+	<!--Import materialize.css-->
+	<link type="text/css" rel="stylesheet" href="materialize/css/materialize.min.css"  media="screen,projection"/>
+
+	<!--Cutomization-->
+	<link type="text/css" rel="stylesheet" href="styles.css"/>
+
+	<!--Let browser know website is optimized for mobile-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+	<script src="brython/brython.js"></script>
+	<script src="brython/brython_stdlib.js"></script>
+
+	<title>Cartes et Loci</title>
+
+<script type="text/python">
+from browser import document, html, alert
+import random
+
+
+def display1(text):
+  	document["display"].clear()
+  	document["display"].html = text
+
+
+def display2(id, text):
+  	document[id].html = document[id].html + text
+
+
+n = 0
+def cartes_obo():
+  global cartes, n
+  n = n + 1
+
+  if n == 32:
+  	document['cartes'].style.display = 'block'
+  	document['display'].style.display = 'none'
+	document['button_left'].style.display = 'none'
+	document['button_right'].style.display = 'none'
+  else:
+  	display1("<div class='carte_obo_frame'><img src='images/" + cartes[n] + ".png' class='carte_obo' /></div>")
+	if n != 0:
+		document['button_left'].style.display = 'block'
+
+
+def cartes_obo_back():
+	global cartes, n
+	if n != 0:
+		n = n - 1
+		display1("<div class='carte_obo_frame'><img src='images/" + cartes[n] + ".png' class='carte_obo' /></div>")
+	if n == 0:
+		document['button_left'].style.display = 'none'
+
+
+i = 0
+selected = []
+def cartes_select(ev):
+	global i, select
+
+	if i != 0 and (str(ev.target.dataid) == selected[-1]):
+		#unselect the last selection
+		document[ev.target.dataid + '_pos'].clear()
+		ev.target.style.opacity = '1'
+		ev.target.style.cursor = 'pointer'
+		del selected[-1]
+		i = i - 1
+		document[selected[-1] + '_pos'].html = "<div style='position:absolute;top:4;right:4;color:#689f38;'><i class='material-icons' style='font-size:60%;'>clear</i></div><img src='images/" + str(i) + ".png' style='cursor:pointer;pointer-events:auto;opacity:1;width:100%;' />"
+	else:
+		if str(ev.target.dataid) not in selected:
+			if i !=0:
+				document[selected[-1] + '_pos'].html = "<div style='position:absolute;top:4;right:4;color:silver;'><i class='material-icons' style='font-size:60%;'>lock</i></div><img src='images/" + str(i) + ".png' style='cursor:pointer;pointer-events:auto;opacity:1;width:100%;' />"
+			selected.append(str(ev.target.dataid))
+			i = i + 1
+			document[ev.target.dataid + '_pos'].html = "<div style='position:absolute;top:4;right:4;color:#689f38;'><i class='material-icons' style='font-size:60%;'>clear</i></div><img src='images/" + str(i) + ".png' style='cursor:pointer;pointer-events:auto;opacity:1;width:100%;' />"
+			ev.target.style.opacity = '0.2'
+	if i == 32:
+		document['validate'].style.display = 'block'
+
+def back():
+	document['validate'].style.display = 'none'
+
+def score():
+	global selected, cartes
+	#for n1 in range(0,len(selected)):
+		#document["score"].html = document["score"].html + selected[n1]
+
+	#document["score"].html = document["score"].html + '<br />'
+
+	#for n2 in range(0,len(cartes)):
+		#document["score"].html = document["score"].html + cartes[n2]
+
+	points = 0
+	for n3 in range(0,len(cartes)):
+		if selected[n3] == cartes[n3]:
+			points = points + 1
+
+		document['cartes'].style.display = 'none'
+	document['validate'].style.display = 'none'
+	#document["score"].html = document["score"].html + '<br />'
+	document["score"].html = str(points) + document["score"].html
+	document['score'].style.display = 'block'
+
+
+cartes = ["C1", "CR", "CD", "CV", "CX", "C9", "C8", "C7", "T1", "TR", "TD", "TV", "TX", "T9", "T8", "T7", "K1", "KR", "KD", "KV", "KX", "K9", "K8", "K7", "P1", "PR", "PD", "PV", "PX", "P9", "P8", "P7"]
+random.shuffle(cartes)
+display1("<div class='carte_obo_frame'><img src='images/" + cartes[0] + ".png' class='carte_obo' /></div>")
+
+document['button_right'].bind('click',cartes_obo)
+document['button_left'].bind('click',cartes_obo_back)
+document['cartes'].bind('click',cartes_select)
+document['display_score'].bind('click',score)
+document['back'].bind('click',back)
+</script>
+
+</head>
+
+<body onload="brython()" style="background-color:white;padding:0px;margin:0px;height:100%;">
+
+	<div id="cartes" class="cartes">
+		<table class="cartes_table">
+			<tr class="cartes_row">
+				<td id='C1' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='C1_pos' class="cartes_selected"></div><img dataid='C1' src='images/C1.png' class='cartes_displayed' /></div></div></td>
+				<td id='CR' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='CR_pos' class="cartes_selected"></div><img dataid='CR' src='images/CR.png' class='cartes_displayed' /></div></div></td>
+				<td id='CD' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='CD_pos' class="cartes_selected"></div><img dataid='CD' src='images/CD.png' class='cartes_displayed' /></div></div></td>
+				<td id='CV' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='CV_pos' class="cartes_selected"></div><img dataid='CV' src='images/CV.png' class='cartes_displayed' /></div></div></td>
+				<td id='CX' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='CX_pos' class="cartes_selected"></div><img dataid='CX' src='images/CX.png' class='cartes_displayed' /></div></div></td>
+				<td id='C9' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='C9_pos' class="cartes_selected"></div><img dataid='C9' src='images/C9.png' class='cartes_displayed' /></div></div></td>
+				<td id='C8' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='C8_pos' class="cartes_selected"></div><img dataid='C8' src='images/C8.png' class='cartes_displayed' /></div></div></td>
+				<td id='C7' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='C7_pos' class="cartes_selected"></div><img dataid='C7' src='images/C7.png' class='cartes_displayed' /></div></div></td>
+			</tr>
+			<tr class="cartes_row">
+				<td id='T1' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='T1_pos' class="cartes_selected"></div><img dataid='T1' src='images/T1.png' class='cartes_displayed' /></div></div></td>
+				<td id='TR' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='TR_pos' class="cartes_selected"></div><img dataid='TR' src='images/TR.png' class='cartes_displayed' /></div></div></td>
+				<td id='TD' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='TD_pos' class="cartes_selected"></div><img dataid='TD' src='images/TD.png' class='cartes_displayed' /></div></div></td>
+				<td id='TV' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='TV_pos' class="cartes_selected"></div><img dataid='TV' src='images/TV.png' class='cartes_displayed' /></div></div></td>
+				<td id='TX' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='TX_pos' class="cartes_selected"></div><img dataid='TX' src='images/TX.png' class='cartes_displayed' /></div></div></td>
+				<td id='T9' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='T9_pos' class="cartes_selected"></div><img dataid='T9' src='images/T9.png' class='cartes_displayed' /></div></div></td>
+				<td id='T8' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='T8_pos' class="cartes_selected"></div><img dataid='T8' src='images/T8.png' class='cartes_displayed' /></div></div></td>
+				<td id='T7' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='T7_pos' class="cartes_selected"></div><img dataid='T7' src='images/T7.png' class='cartes_displayed' /></div></div></td>
+			</tr>
+			<tr class="cartes_row">
+				<td id='K1' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='K1_pos' class="cartes_selected"></div><img dataid='K1' src='images/K1.png' class='cartes_displayed' /></div></div></td>
+				<td id='KR' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='KR_pos' class="cartes_selected"></div><img dataid='KR' src='images/KR.png' class='cartes_displayed' /></div></div></td>
+				<td id='KD' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='KD_pos' class="cartes_selected"></div><img dataid='KD' src='images/KD.png' class='cartes_displayed' /></div></div></td>
+				<td id='KV' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='KV_pos' class="cartes_selected"></div><img dataid='KV' src='images/KV.png' class='cartes_displayed' /></div></div></td>
+				<td id='KX' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='KX_pos' class="cartes_selected"></div><img dataid='KX' src='images/KX.png' class='cartes_displayed' /></div></div></td>
+				<td id='K9' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='K9_pos' class="cartes_selected"></div><img dataid='K9' src='images/K9.png' class='cartes_displayed' /></div></div></td>
+				<td id='K8' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='K8_pos' class="cartes_selected"></div><img dataid='K8' src='images/K8.png' class='cartes_displayed' /></div></div></td>
+				<td id='K7' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='K7_pos' class="cartes_selected"></div><img dataid='K7' src='images/K7.png' class='cartes_displayed' /></div></div></td>
+			</tr>
+			<tr class="cartes_row">
+				<td id='P1' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='P1_pos' class="cartes_selected"></div><img dataid='P1' src='images/P1.png' class='cartes_displayed' /></div></div></td>
+				<td id='PR' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='PR_pos' class="cartes_selected"></div><img dataid='PR' src='images/PR.png' class='cartes_displayed' /></div></div></td>
+				<td id='PD' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='PD_pos' class="cartes_selected"></div><img dataid='PD' src='images/PD.png' class='cartes_displayed' /></div></div></td>
+				<td id='PV' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='PV_pos' class="cartes_selected"></div><img dataid='PV' src='images/PV.png' class='cartes_displayed' /></div></div></td>
+				<td id='PX' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='PX_pos' class="cartes_selected"></div><img dataid='PX' src='images/PX.png' class='cartes_displayed' /></div></div></td>
+				<td id='P9' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='P9_pos' class="cartes_selected"></div><img dataid='P9' src='images/P9.png' class='cartes_displayed' /></div></div></td>
+				<td id='P8' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='P8_pos' class="cartes_selected"></div><img dataid='P8' src='images/P8.png' class='cartes_displayed' /></div></div></td>
+				<td id='P7' class="cartes_col"><div class="cartes_frame"><div class="cartes_bg"><div id='P7_pos' class="cartes_selected"></div><img dataid='P7' src='images/P7.png' class='cartes_displayed' /></div></div></td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- Cartes une par une -->
+	<div id="display" style="text-align:center;"></div>
+
+	<!-- boutons gauche - droite -->
+	<div id="button_left" class="button_l" style="display:none;"><a class="waves-effect waves-light btn btn-large button_lr blue-grey darken-3"><i class="material-icons">keyboard_arrow_left</i></a></div>
+	<div id="button_right" class="button_r"><a class="waves-effect waves-light btn btn-large button_lr blue-grey darken-3"><i class="material-icons">keyboard_arrow_right</i></a></div>
+
+	<!-- validation choix -->
+	<div id="validate" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;background-color:white;opacity:0.9;z-index:10000;">
+		<div style="width:100%;position:absolute;opacity:none;top:50%;text-align:center;z-index:20000;">
+			<a id="back" class="btn-floating btn-large waves-effect waves-light blue-grey darken-3" style="margin-right:30px;"><i class="material-icons">arrow_back</i></a>
+			<a id="display_score" class="btn-floating btn-large waves-effect waves-light" style="margin-left:30px;background-color:#2d5ba0;"><i class="material-icons">check</i></a>
+		</div>
+	</div>
+
+	<!-- SCORE -->
+	<div id="score" style='display:none;padding-top:5%;font-family:bariol;width:100%;text-align:center;font-size:100px;font-weight:bold;'>
+		<br /><a href="cartes.html" class="btn-floating btn-large blue-grey darken-3" style="margin-right:20px;"><i class="material-icons">autorenew</i></a>
+	</div>
+
+	<!-- MENU -->
+	<div id="menu" class="fixed-action-btn" style="right:20px;bottom:20px;">
+		<a class="btn-floating" style="background-color:#2d5ba0;"><i class="large material-icons">layers</i></a>
+		<ul>
+			<li><a href="index.html" class="btn-floating blue-grey darken-3"><i class="material-icons">home</i></a></li>
+			<li><a href="cartes.html" class="btn-floating blue-grey darken-3"><i class="material-icons">autorenew</i></a></li>
+		</ul>
+	</div>
+
+	<!--Import jQuery before materialize.js-->
+  <script type="text/javascript" src="jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
+
+	<script type="text/javascript" src="cordova.js"></script>
+</body>
+</html>
